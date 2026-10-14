@@ -1,1 +1,6 @@
 AS_venv/*
+
+.venv/
+.python-version
+pyproject.toml
+uv.lock
