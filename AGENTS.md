@@ -16,5 +16,6 @@ Tasks 4–5 are written answers (tagging method, content-based recommender, low-
 ## Constraints
 
 - Python only. Use Gensim 4.3.3, NLTK 3.9.1, and the standard library, as pinned in [requirements.txt](requirements.txt). Do not add scikit-learn, spaCy, or other ML libraries.
-- Match the course examples in [src/assignment1/](src/assignment1/): plain scripts using a Gensim dictionary, TF-IDF or LDA, and `MatrixSimilarity`. Keep new code in that tree, and keep it simple enough that the team can explain it.
+- Match the course examples in [src/assignment1/](src/assignment1/): plain, human-readable scripts using a Gensim dictionary, TF-IDF or LDA, and `MatrixSimilarity`. Keep new code in that tree. Prefer code a teammate can read and explain line by line.
+- When new code under [src/assignment1/](src/assignment1/) is added or changed, create or update a short note in `docs/` for that code. The note says what the code does, how to run it, and what it prints. Course examples already in that folder do not need notes. Keep tasks 4–5 out of `docs/` unless someone asks.
 - The dataset is [data/news2.csv](data/news2.csv). Do not commit virtualenvs or lockfiles; those paths are already in [.gitignore](.gitignore).
