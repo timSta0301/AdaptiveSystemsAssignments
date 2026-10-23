@@ -1,0 +1,6 @@
+# self-matches were excluded before the top 10
+model,section,ratio_quality,model_seconds,query_seconds
+tfidf,Food & Drink,0.599180,13.387,5.564
+lda,Food & Drink,0.523770,40.972,0.313
+tfidf,Sports,0.387273,13.884,5.224
+lda,Sports,0.053636,39.811,0.415

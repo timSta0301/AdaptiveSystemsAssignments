@@ -4,3 +4,11 @@ AS_venv/*
 .python-version
 pyproject.toml
 uv.lock
+
+__pycache__/
+*.py[cod]
+
+.DS_Store
+.idea/
+.vscode/
+.env
