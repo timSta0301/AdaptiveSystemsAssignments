@@ -4,6 +4,7 @@ Given this data set including news, the assignment consists of the following tas
 
 1. Implement the following pseudocode to calculate the variable ratio_quality using the TFIDF vectors built from the description fields:
 
+```
 total_goods = 0
 
 For every article (a) on topic (article_section) "Food and Drink":
@@ -17,17 +18,17 @@ For every article (a) on topic (article_section) "Food and Drink":
 endFor
 
 ratio_quality = total_goods/(num_articles_food_and_drink*10)
-
+```
  
 
 And measure the execution times separately for the following two subprocesses: 
 
-    Creating the model (from the program begin to the call similarities.MatrixSimilarity(tfidf_vectors))
-    Implementation of the pseudocode above.
+    - Creating the model (from the program begin to the call similarities.MatrixSimilarity(tfidf_vectors))
+    - Implementation of the pseudocode above.
 
  
 
-2. Repeat the previous task with LDA vectors and compare the results. Explain the differences in the results and execution times. Use 30 topics, two passes, and a random state parameter = 30.
+2. Repeat the previous task with LDA vectors and compare the results. Explain the differences in the results and execution times. **Use 30 topics, two passes, and a random state parameter = 30.**
 
 3. Repeat the previous two tasks but with the topic "Sports" and compare the results. Why do you think that the quality of the results is worse than the ones obtained with the topic "Food and Drink"?
 
