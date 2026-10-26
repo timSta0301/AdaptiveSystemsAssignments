@@ -5,6 +5,7 @@ from evaluate import (
     LDA_RANDOM_STATE,
     LDA_TOPICS,
     build_vectors,
+    parse_tags,
     preprocess,
     ratio_quality,
     top_neighbors,
@@ -15,6 +16,14 @@ from gensim import corpora
 class PreprocessTests(unittest.TestCase):
     def test_drops_stopwords_and_stems(self):
         self.assertEqual(preprocess(text="the cooking"), ["cook"])
+
+
+class TagTests(unittest.TestCase):
+    def test_tags_are_trimmed_lowercased_and_empty_ones_dropped(self):
+        self.assertEqual(
+            parse_tags(text=" celebrity parents,Video,,video "),
+            ["celebrity parents", "video", "video"],
+        )
 
 
 class NeighborTests(unittest.TestCase):

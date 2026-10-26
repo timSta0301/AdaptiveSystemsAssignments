@@ -22,7 +22,7 @@ RESULTS_PATH: Path = REPO_ROOT / "results" / "ratio_quality_results.csv"
 STEMMER: PorterStemmer = PorterStemmer()
 STOPWORDS: list[str] = stopwords.words("english")
 
-ModelName: TypeAlias = Literal["tfidf", "lda"]
+ModelName: TypeAlias = Literal["tfidf", "lda", "tags"]
 SectionName: TypeAlias = Literal["Food & Drink", "Sports"]
 Run: TypeAlias = tuple[ModelName, SectionName]
 Bow: TypeAlias = list[tuple[int, int]]
@@ -32,6 +32,8 @@ SimilarityScores: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float32]]
 
 
 class Article(TypedDict):
+    headline: str
+    tags: str
     description: str
     article_section: str
 
@@ -44,16 +46,18 @@ class Result(TypedDict):
     query_seconds: float
 
 
-RUNS: Final[tuple[Run, Run, Run, Run]] = (
+RUNS: Final[tuple[Run, ...]] = (
     ("tfidf", "Food & Drink"),
     ("lda", "Food & Drink"),
+    ("tags", "Food & Drink"),
     ("tfidf", "Sports"),
     ("lda", "Sports"),
+    ("tags", "Sports"),
 )
 
 
 def load_articles(path: Path) -> list[Article]:
-    """Read description and section for every row. Empty descriptions stay in the corpus."""
+    """Read headline, tags, description and section for every row. Empty descriptions stay in the corpus."""
     articles: list[Article] = []
     with open(file=path, newline="", encoding="utf-8") as handle:
         reader: DictReader[str] = DictReader(handle)
@@ -61,6 +65,8 @@ def load_articles(path: Path) -> list[Article]:
             description: str = row["description"] or ""
             article_section: str = row["article_section"] or ""
             article: Article = {
+                "headline": row["headline"] or "",
+                "tags": row["tags"] or "",
                 "description": description,
                 "article_section": article_section,
             }
@@ -75,16 +81,29 @@ def preprocess(text: str) -> list[str]:
     ]
 
 
+def parse_tags(text: str) -> list[str]:
+    """Split the comma-separated tags field. "Celebrity Moms " and "celebrity moms" become one tag."""
+    tags: list[str] = []
+    for tag in text.split(","):
+        tag = tag.strip().lower()
+        if tag:
+            tags.append(tag)
+    return tags
+
+
 def build_vectors(
     model: ModelName, bows: list[Bow], dictionary: Dictionary
 ) -> list[TfidfVector] | list[LdaVector]:
     """Fit TF-IDF or LDA and return one vector per document.
 
+    "tags" is TF-IDF on the tag lists: a rare tag such as "kanye west" counts
+    more than a common one such as "entertainment".
+
     The vectors are a list so the query loop can read vectors[i] again.
     A transformed corpus can only be iterated once.
     """
     bow: Bow
-    if model == "tfidf":
+    if model in ("tfidf", "tags"):
         tfidf: TfidfModel = TfidfModel(corpus=bows)
         vectors: list[TfidfVector] = []
         for bow in bows:
@@ -159,9 +178,11 @@ def evaluate(model: ModelName, section: str, path: Path = DATA_PATH) -> Result:
     """
     articles: list[Article] = load_articles(path)
     started: float = perf_counter()
-    texts: list[list[str]] = [
-        preprocess(text=article["description"]) for article in articles
-    ]
+    texts: list[list[str]]
+    if model == "tags":
+        texts = [parse_tags(text=article["tags"]) for article in articles]
+    else:
+        texts = [preprocess(text=article["description"]) for article in articles]
     dictionary: Dictionary = Dictionary(documents=texts)
     bows: list[Bow] = [dictionary.doc2bow(document=text) for text in texts]
     vectors: list[TfidfVector] | list[LdaVector] = build_vectors(
