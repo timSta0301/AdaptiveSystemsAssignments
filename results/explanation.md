@@ -49,38 +49,6 @@ What we would store additionally (not implemented):
 In `results/recommendation.txt` we tried two users who each read five articles of one section. The food reader got 7 Food & Drink articles out of 10, the others were about bagels (Weird News), dinner conversation (Comedy) and the Whole30 diet (Wellness). The sports reader got 6 Sports articles out of 10, plus for example a DWTS article (Entertainment) and a politics article. The recommender finds the right area but not always the right section, because it only compares words and the average of five articles is a bit blurry. Hiding or disliking would help here.
 
 Low-fidelity screens:
-
-```
-1. Choose interests            2. For you (home)
-+--------------------------+   +--------------------------+
-| What do you like to read?|   | For you | Latest     (Me) |
-|                          |   |--------------------------|
-| [Sports] [Food & Drink]  |   | [img] Healthy salad      |
-| [Politics] [Travel]      |   | Food & Drink #recipes    |
-| [Wellness] [Business]    |   | because you read: rice   |
-| [Comedy]  [Parenting]    |   | [like] [not for me]      |
-|                          |   |--------------------------|
-| [Skip]        [Continue] |   | [img] Biles withdraws    |
-+--------------------------+   | Sports #olympics         |
-                               | because you read: Raisman|
-                               | [like] [not for me]      |
-                               +--------------------------+
-
-3. Article                     4. My interests
-+--------------------------+   +--------------------------+
-| < back            [save] |   | < My interests           |
-| Biles withdraws from ... |   |                          |
-| Sports                   |   | sports      ########  [x]|
-| text text text text ...  |   | nba         #####     [x]|
-| text text text text ...  |   | olympics    ####      [x]|
-| Tags: #olympics          |   | [+ add]                  |
-|       #simone biles      |   |                          |
-|--------------------------|   | Hidden: celebrity gossip |
-| More like this           |   | History (12)   [view]    |
-| > Biles makes a face     |   | [reset profile]          |
-| > Raisman note           |   +--------------------------+
-| [like]     [not for me]  |
-+--------------------------+
-```
+![screens](./screens.png)
 
 The user starts on screen 1, then uses the home feed (2). Opening a card shows the article (3), and reading, liking or disliking it changes the next feed. "Me" opens screen 4, where the user can see the interests we have for them and remove or hide them.
