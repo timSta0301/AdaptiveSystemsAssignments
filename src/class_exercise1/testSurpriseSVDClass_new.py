@@ -1,4 +1,5 @@
 from collections import defaultdict
+from pathlib import Path
 from pprint import pprint
 
 import pandas as pd
@@ -51,7 +52,7 @@ def load_csv():
     # First column: item IDs
     # Remaining column headers: user IDs
     csv_file = pd.read_csv(
-        "data.csv",
+        Path(__file__).resolve().parents[2] / "data" / "data.csv",
         delimiter=";",
         dtype=str
     )
