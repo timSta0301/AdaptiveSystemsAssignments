@@ -1,4 +1,41 @@
-# Tasks 4 and 5
+# Explanation
+
+## Task 2: LDA compared with TF-IDF
+
+We ran the same loop with LDA vectors (30 topics, 2 passes, random_state 30). "Model build" is the time up to `MatrixSimilarity`, "top-10 loop" is the pseudocode loop.
+
+| model | section | ratio_quality | model build | top-10 loop |
+| --- | --- | --- | --- | --- |
+| TF-IDF | Food & Drink | 0.599 | 32.5 s | 17.6 s |
+| LDA | Food & Drink | 0.524 | 110.6 s | 0.34 s |
+
+**Quality.** LDA is a bit worse (0.524 against 0.599). TF-IDF compares the exact words of two descriptions. LDA reduces each description to 30 topic weights, which is a rough summary, so articles with a similar general theme become neighbours even if they are in different sections. For example, 40 of the 122 food articles have as main topic a very general one (get, like, one, make, time) that 549 articles of all sections share.
+
+**Model build time.** LDA is about 3 times slower (111 s against 33 s). Both do the same preprocessing first. LDA then also has to train the topic model and compute a topic vector for every article. TF-IDF only counts words.
+
+**Top-10 loop time.** Here LDA wins (0.34 s against 17.6 s). Every article is compared with all 5,285 others. A TF-IDF vector has one value per word of the dictionary (161,607 words), an LDA vector only 30 values, so each comparison is much cheaper.
+
+## Task 3: the topic "Sports"
+
+Same models, same settings, on the Sports articles:
+
+| model | section | ratio_quality | model build | top-10 loop |
+| --- | --- | --- | --- | --- |
+| TF-IDF | Sports | 0.387 | 44.5 s | 17.1 s |
+| LDA | Sports | 0.054 | 115.4 s | 0.33 s |
+
+The times are like for Food & Drink. Both models are worse than on Food & Drink, LDA much worse. We looked at which sections the 10 neighbours of the 110 sports articles come from:
+
+- TF-IDF: 426 of 1,100 are Sports. The others are mostly Politics (141), Business (61) and Entertainment (57).
+- LDA: only 59 of 1,100 are Sports. Most are Entertainment (186) and Politics (154).
+
+Why we think Sports is worse than Food & Drink:
+
+- Food articles use the same words (cook, recipe, eat). Sports articles cover many different sports and events, so they share fewer words with each other. Some are probably also about politics or entertainment more than about sport. We did not read them one by one to check this.
+- Sports is small (110 of 5,285 articles) and Politics is large (1,020), so wrong neighbours come from the big sections easily.
+- For LDA none of the 30 topics is about sports. The main topics of the sports articles are general ones (said, one, would, say), so a sports article looks like thousands of other articles. Food has its own topic (food, cook, eat).
+
+The tags in Task 4 give 0.474 for Sports, which fits this: the description text is the weak part.
 
 ## Task 4: comparing articles with tags
 
