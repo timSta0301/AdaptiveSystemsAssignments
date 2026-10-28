@@ -18,7 +18,9 @@ class RecommenderTests(unittest.TestCase):
             article("pasta recipe with tomato sauce", "food,pasta", "Food & Drink"),
             article("fresh pasta and tomato salad", "food,pasta", "Food & Drink"),
             article("the football team won the game", "sports,football", "Sports"),
-            article("players train before the football game", "sports,football", "Sports"),
+            article(
+                "players train before the football game", "sports,football", "Sports"
+            ),
         ]
         self.dictionary, self.vectors, self.index = build_model(articles=self.articles)
 
@@ -33,6 +35,19 @@ class RecommenderTests(unittest.TestCase):
         recommendations = recommend(profile=profile, index=self.index, k=3)
         self.assertNotIn(0, recommendations)
         self.assertEqual(recommendations[0], 1)
+
+    def test_order_of_the_interest_vector_does_not_matter(self):
+        # The profile is built in reading order, not sorted by token id.
+        profile = build_profile(read=[0, 2], vectors=self.vectors)
+        reversed_profile = {
+            "read": profile["read"],
+            "interests": dict(reversed(list(profile["interests"].items()))),
+        }
+
+        self.assertEqual(
+            recommend(profile=profile, index=self.index, k=2),
+            recommend(profile=reversed_profile, index=self.index, k=2),
+        )
 
 
 if __name__ == "__main__":

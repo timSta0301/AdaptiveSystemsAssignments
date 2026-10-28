@@ -11,6 +11,31 @@ from evaluate import (
     top_neighbors,
 )
 from gensim import corpora
+from gensim.similarities import MatrixSimilarity
+
+# Six food and six sports sentences. Food sentences share "recipe", sports ones share "game".
+SMALL_CORPUS = [
+    ("pasta recipe with tomato sauce", "Food & Drink"),
+    ("fresh bread recipe", "Food & Drink"),
+    ("soup recipe for winter", "Food & Drink"),
+    ("chocolate cake recipe", "Food & Drink"),
+    ("easy salad recipe", "Food & Drink"),
+    ("rice recipe with beans", "Food & Drink"),
+    ("football game tonight", "Sports"),
+    ("tennis game in paris", "Sports"),
+    ("the basketball game ended late", "Sports"),
+    ("hockey game on ice", "Sports"),
+    ("rugby game in the rain", "Sports"),
+    ("golf game at the club", "Sports"),
+]
+
+
+def small_corpus_bows():
+    texts = [preprocess(text=sentence) for sentence, section in SMALL_CORPUS]
+    dictionary = corpora.Dictionary(texts)
+    bows = [dictionary.doc2bow(text) for text in texts]
+    sections = [section for sentence, section in SMALL_CORPUS]
+    return dictionary, bows, sections
 
 
 class PreprocessTests(unittest.TestCase):
@@ -50,6 +75,22 @@ class NeighborTests(unittest.TestCase):
             )
 
 
+class RatioQualityTests(unittest.TestCase):
+    def test_ratio_on_a_real_index_leaves_out_the_article_itself(self):
+        # A food article has 5 other food articles and 6 sports articles.
+        # Only the 5 food ones share a word with it, so its top 10 holds 5 goods.
+        # Counting the article itself would give 6 goods and a ratio of 0.6.
+        dictionary, bows, sections = small_corpus_bows()
+        vectors = build_vectors(model="tfidf", bows=bows, dictionary=dictionary)
+        index = MatrixSimilarity(corpus=vectors)
+
+        ratio = ratio_quality(
+            index=index, vectors=vectors, sections=sections, section="Food & Drink"
+        )
+
+        self.assertAlmostEqual(ratio, 0.5)
+
+
 class ModelTests(unittest.TestCase):
     def test_lda_settings_match_the_assignment(self):
         self.assertEqual(LDA_TOPICS, 30)
@@ -72,6 +113,16 @@ class ModelTests(unittest.TestCase):
         vectors = build_vectors(model="tfidf", bows=bows, dictionary=dictionary)
 
         self.assertEqual(len(vectors), 6)
+
+    def test_lda_returns_topic_vectors(self):
+        dictionary, bows, sections = small_corpus_bows()
+
+        vectors = build_vectors(model="lda", bows=bows, dictionary=dictionary)
+
+        self.assertEqual(len(vectors), len(bows))
+        for vector in vectors:
+            for topic_id, weight in vector:
+                self.assertLess(topic_id, LDA_TOPICS)
 
     def test_unknown_model_raises(self):
         with self.assertRaises(ValueError):
