@@ -1,0 +1,39 @@
+== user who read 5 Food & Drink articles
+read:
+  [Food & Drink] How To Make Rice Pudding From Leftover Rice
+  [Food & Drink] How to Eat During Passover: 5 Things to Know
+  [Food & Drink] It's About Time You Knew About Montreal-Style Bagels
+  [Food & Drink] How To Ripen An Avocado In 10 Minutes
+  [Food & Drink] Mark Bittman on How You Can Make Sure You're Eating Ethically
+interests: bagel, avocado, rice, montreal-styl, eat, passov, cook, food, katz', pud
+recommended:
+  [Food & Drink] Top to Root: Good to the Last Drop
+  [Food & Drink] 7 Delicious Recipes For Your Super Bowl Blowout
+  [Weird News] People Are Losing Their Minds Over A Photo Of Bagels Sliced Like Bread
+  [Comedy] Gastronomic Superiority and the Death of Dinner Conversation
+  [Food & Drink] How to Build The Perfect 'Healthy' Salad
+  [Food & Drink] Cooked vs. Raw: The Healthiest Way To Eat Fruits And Vegetables
+  [Wellness] This Is Your Body On The Whole30 Diet
+  [Food & Drink] 5 Summertime Treats to Help You Cool Down
+  [Food & Drink] The A-Z Of Superfood Recipes
+  [Food & Drink] 4 Healthy Ingredient Swaps That ACTUALLY Taste Good
+
+== user who read 5 Sports articles
+read:
+  [Sports] Obama Shares His Hot Take On This Year's Chicago Bulls
+  [Sports] Prince William Absolutely Loses It Over Soccer Team's Win
+  [Sports] Here’s The Note Aly Raisman Found On Her Bed After Winning Silver
+  [Sports] Let's Reintroduce Trump To The Muslim Athletes He Claims Don't Exist
+  [Sports] She Beat Every Man On The Track, Then Told Her Haters To "Get Stuffed"
+interests: aston, bull, race, hernandez, lauri, villa, nba, obama, femal, chicago’
+recommended:
+  [Sports] In A Crappy Year, These Sports Moments Brought Us Joy
+  [Entertainment] And The Winners Of 'DWTS' Are...
+  [Sports] Simone Biles Makes A Great Face When Bob Costas Says She Just Became Famous
+  [Sports] How The 'Average' American Sees It
+  [Sports] Simone Biles Withdraws From Women’s All-Around Final At Tokyo Olympics
+  [Sports] All Hail This Amazing Thunder-Warriors NBA Playoff Series
+  [Sports] People Are In Love With This Bicycling, Gold Medal-Winning Couple
+  [Politics] Kidnapped By A Narcissist: The GOP's Stockholm Syndrome
+  [U.S. News] After 30 Horse Deaths, California Officials May Soon Have Power To Shut Down Racetracks
+  [Entertainment] Kareem Abdul-Jabbar's Son Arrested For Allegedly Stabbing Neighbor
