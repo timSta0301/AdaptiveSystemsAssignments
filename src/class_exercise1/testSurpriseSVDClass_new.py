@@ -3,7 +3,7 @@ from pathlib import Path
 from pprint import pprint
 
 import pandas as pd
-from surprise import Reader, SVD, Dataset
+from surprise import SVD, Dataset, Reader
 from surprise.accuracy import mae
 from surprise.model_selection import train_test_split
 
@@ -30,18 +30,13 @@ def precision_recall_at_n(predictions, n=10, threshold=3.5):
         n_rel = sum(true_r >= threshold for _, true_r in user_ratings)
 
         # Number of relevant items among the top N recommendations
-        n_rel_and_rec = sum(
-            true_r >= threshold
-            for _, true_r in user_ratings[:n]
-        )
+        n_rel_and_rec = sum(true_r >= threshold for _, true_r in user_ratings[:n])
 
         # Standard Precision@N: relevant recommendations / N
         precisions[uid] = n_rel_and_rec / min(n, len(user_ratings))
 
         # Recall@N: relevant recommendations / relevant test items
-        recalls[uid] = (
-            n_rel_and_rec / n_rel if n_rel > 0 else 0
-        )
+        recalls[uid] = n_rel_and_rec / n_rel if n_rel > 0 else 0
 
     return precisions, recalls
 
@@ -54,7 +49,7 @@ def load_csv():
     csv_file = pd.read_csv(
         Path(__file__).resolve().parents[2] / "data" / "data.csv",
         delimiter=";",
-        dtype=str
+        dtype=str,
     )
 
     item_ids = csv_file.iloc[:, 0]
@@ -65,11 +60,7 @@ def load_csv():
 
     # Convert the matrix into long format:
     # one row per user-item-rating combination
-    df = ratings_matrix.melt(
-        id_vars="itemID",
-        var_name="userID",
-        value_name="rating"
-    )
+    df = ratings_matrix.melt(id_vars="itemID", var_name="userID", value_name="rating")
 
     # Remove missing ratings
     df = df.dropna(subset=["rating"])
@@ -81,21 +72,14 @@ def load_csv():
     # Prepare the data for Surprise
     reader = Reader(rating_scale=(1, 5))
 
-    return Dataset.load_from_df(
-        df[["userID", "itemID", "rating"]],
-        reader
-    )
+    return Dataset.load_from_df(df[["userID", "itemID", "rating"]], reader)
 
 
 # Load ratings from CSV
 data = load_csv()
 
 # Split the observed ratings into training and test sets
-trainset25, testset25 = train_test_split(
-    data,
-    test_size=0.25,
-    random_state=22
-)
+trainset25, testset25 = train_test_split(data, test_size=0.25, random_state=22)
 
 # Train the SVD model
 algo = SVD(random_state=3)
@@ -117,21 +101,13 @@ for uid, iid, real, est, _ in predictions25SVD:
 mae(predictions25SVD)
 
 # Calculate Precision@5 and Recall@5
-precisions, recalls = precision_recall_at_n(
-    predictions25SVD,
-    n=5,
-    threshold=4
-)
+precisions, recalls = precision_recall_at_n(predictions25SVD, n=5, threshold=4)
 
 # Average across users
 pre = sum(precisions.values()) / len(precisions) if precisions else 0
 recall = sum(recalls.values()) / len(recalls) if recalls else 0
 
-f1 = (
-    2 * pre * recall / (pre + recall)
-    if pre + recall > 0
-    else 0
-)
+f1 = 2 * pre * recall / (pre + recall) if pre + recall > 0 else 0
 
 print("Precision@5:", pre)
 print("Recall@5:", recall)
