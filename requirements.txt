@@ -1,6 +1,5 @@
 gensim == 4.3.3
 nltk == 3.9.1
 pandas == 2.3.3
-pandas == 2.3.3
 scikit-learn == 1.7.2
 scikit-surprise == 1.1.5
