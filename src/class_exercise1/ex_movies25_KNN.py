@@ -33,35 +33,60 @@ def load_csv():
     return df[["userID", "itemID", "rating"]]
 
 
-# No train/test split: the file already has 25% missing ratings, so we train on all of them
+# No train/test split: the file already has 25% missing ratings,
+# so we train on all the ratings we have
 df = load_csv()
-trainset = Dataset.load_from_df(df, Reader(rating_scale=(1, 5))).build_full_trainset()
+reader = Reader(rating_scale=(1, 5))
+data = Dataset.load_from_df(df, reader)
+trainset = data.build_full_trainset()
 
 # Pearson over co-rated movies is the same as CORREL in the Excel file.
-# KNNWithMeans = user mean + similarity-weighted average of the neighbours' (rating - mean).
+# KNNWithMeans = user mean + similarity-weighted average of the
+# neighbours' (rating - their mean).
 k = 6
-algo = KNNWithMeans(k, sim_options={"name": "pearson", "user_based": True}, verbose=False)
+sim_options = {"name": "pearson", "user_based": True}
+algo = KNNWithMeans(k=k, sim_options=sim_options, verbose=False)
 algo.fit(trainset)
 
 target_user = "Wolverine"
 target_item = "Titanic"
 
 prediction = algo.predict(target_user, target_item)
-print(f"Predicted rating of {target_user} for {target_item}: {prediction.est:.4f}")
+print("Predicted rating:", round(prediction.est, 4))
 print("Neighbours used:", prediction.details["actual_k"])
 
-# Neighbour table, like the "Wolverine - 25%" Excel sheet.
-# trainset.ir[item] is a list of (inner user id, rating) for the users who rated that item.
-user_inner = trainset.to_inner_uid(target_user)
-raters = trainset.ir[trainset.to_inner_iid(target_item)]
-neighbours = sorted(raters, key=lambda r: algo.sim[user_inner, r[0]], reverse=True)[:k]
+# Neighbour table, like the "Wolverine - 25%" Excel sheet
+user_means = df.groupby("userID")["rating"].mean()
+titanic_ratings = df[df["itemID"] == target_item]
 
-print(f"\n{'Neighbour':<20}{'Correlation':>12}{'Rating':>8}{'Average':>9}{'Normalized':>12}")
-for other_inner, rating in neighbours:
-    average = algo.means[other_inner]
-    print(
-        f"{trainset.to_raw_uid(other_inner):<20}{algo.sim[user_inner, other_inner]:>12.3f}"
-        f"{rating:>8.0f}{average:>9.3f}{rating - average:>12.3f}"
+# Surprise numbers the users internally; the correlation matrix uses those numbers
+wolverine_number = trainset.to_inner_uid(target_user)
+
+rows = []
+for _, row in titanic_ratings.iterrows():
+    other_user = row["userID"]
+    other_number = trainset.to_inner_uid(other_user)
+
+    correlation = algo.sim[wolverine_number, other_number]
+    average = user_means[other_user]
+
+    rows.append(
+        {
+            "Neighbour": other_user,
+            "Correlation": correlation,
+            "Rating": row["rating"],
+            "Average": average,
+            "Normalized": row["rating"] - average,
+        }
     )
 
-print(f"\n{target_user}'s average rating: {algo.means[user_inner]:.4f}")
+# Keep the 6 users with the highest correlation to Wolverine
+neighbours = pd.DataFrame(rows)
+neighbours = neighbours.sort_values("Correlation", ascending=False)
+neighbours = neighbours.head(k)
+
+print()
+print(neighbours.round(3).to_string(index=False))
+
+print()
+print("Wolverine's average rating:", round(user_means[target_user], 4))
