@@ -22,6 +22,12 @@ python src/assignment1/evaluate.py
 
 The script runs six cells: TF-IDF, LDA and tags, each on `Food & Drink` and on `Sports`. Every model is built again for each cell, because the model-build timer starts at the beginning of that call.
 
+The unit tests use small in-memory corpora and finish in under a second. Run them from the repository root:
+
+```bash
+PYTHONPATH=src/assignment1 python -m unittest discover -s tests -v
+```
+
 ## What it prints
 
 One progress line when a cell starts, then one result line when it finishes:
